@@ -2,7 +2,7 @@ import random
 import threading
 import time
 import numpy as np
-from arrays import goal_arr, start_arr
+from new_arrays import goal_arr, start_arr
 import matplotlib.pyplot as plt
 import multiprocessing
 import winsound
@@ -101,7 +101,7 @@ def main():
                                 args=(i, og_sum, *coeff_arr)).start()
 
 
-def comparison_method(method, final_sum_arr, num_split=10):
+def comparison_method(method, final_sum_arr, num_split=9):
     attempt_sections = np.split(final_sum_arr, num_split)
     goal_sections = np.split(goal_arr, num_split)
     summation = None
@@ -126,13 +126,13 @@ def get_sum_arr(PreFilter_Gain, HPF_G1, LPF_G1, Through_Gain1, HPF_G2, LPF_G2, T
     sum_out = Through_Gain2 * sum_1 + HPF_2 + LPF_2
 
     summation = comparison_method(method=method, final_sum_arr=sum_out,
-                                  num_split=10)
+                                  num_split=9)
     return summation, sum_out
 
 
 def pass_filter(hpf, input_arr, TC, G):
-    hpf_arr = np.zeros(10000)
-    lpf_arr = np.zeros(10000)
+    hpf_arr = np.zeros(len(input_arr))
+    lpf_arr = np.zeros(len(input_arr))
     for i in range(1, len(input_arr)):
         hpf_arr[i] = G * input_arr[i - 1] - lpf_arr[i - 1]
         lpf_arr[i] = TC * hpf_arr[i] + lpf_arr[i - 1]
