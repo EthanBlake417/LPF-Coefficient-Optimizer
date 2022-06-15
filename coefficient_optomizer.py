@@ -40,7 +40,7 @@ def program(thread_number, best_sum, PreFilter_Gain, HPF_G1, LPF_G1, Through_Gai
                     elif direction == 'down':
                         coeff_arr[i] -= element
 
-                    cur_sum, final_sum_arr = get_sum_arr(*coeff_arr, method=0)
+                    cur_sum, final_sum_arr = get_sum_arr(*coeff_arr, method=thread_number)
                     if cur_sum < best_sum:
                         counter = 0
                         best_sums_printed += 1
@@ -62,7 +62,7 @@ def program(thread_number, best_sum, PreFilter_Gain, HPF_G1, LPF_G1, Through_Gai
             counter += 1
         if counter >= 4:
             break
-    with open('readme.txt', 'a') as f:
+    with open('best_solutions.txt', 'a') as f:
         f.write(
             f'{thread_number}, {best_sum}\n{coeff_arr[0]}, {coeff_arr[1]}, {coeff_arr[2]}, {coeff_arr[3]}, {coeff_arr[4]}, {coeff_arr[5]}, {coeff_arr[6]}, {coeff_arr[7]}, {coeff_arr[8]}, {coeff_arr[9]}, {coeff_arr[10]},{ coeff_arr[11]}\n')
     logging.info(f"Process {thread_number} Done")
@@ -79,7 +79,7 @@ def program(thread_number, best_sum, PreFilter_Gain, HPF_G1, LPF_G1, Through_Gai
 def main():
     # this section gets us a decent random starting point
     # this time using squared instead of abs
-    for i in range(1):
+    for i in range(3):
         # if i == 0:
         #     og_sum = 70000
         # elif i == 1:
@@ -92,9 +92,15 @@ def main():
         while og_sum < cur_sum:
             coeff_arr = [round(random.uniform(0, 1), 4) for _ in range(12)]
             # coeff_arr[6] = .0006
-            cur_sum, cur_sum_arr = get_sum_arr(*coeff_arr, method=0)
+            cur_sum, cur_sum_arr = get_sum_arr(*coeff_arr, method=i)
+        if i == 0:
+            coeff_arr = [2.6388674000000942, -0.20393999999999995, 23.766464400001453, 0.21732629999999795, -1.198259999999985, 0.9975551999999853, -0.18376879999999557, 0.418, 0.017385899999998476, 0.01739379999999823, 0.01609789999999864, 0.01630079999999897]
+        elif i == 1:
+            coeff_arr = [0.6185585999999866, 4.615245100000006, 11.834540599999919, -5.140384800000144, -19.45480640000046, 19.581943600000226, 0.08311400000000053, 0.5368, 0.2105836999999988, 0.009946799999999223, 0.020598699999999966, 1.0040097000000063]
+        elif i == 2:
+            coeff_arr = [0.7040968999999984, -1.45716719999998, 1.2220224000000208, -0.08416110000000022, -0.4941555000000284, 80.04012220000415, 0.4966880999999722, 0.4743, 0.015734899999999254, 0.015680499999998737, 0.014422299999998167, 0.014143899999998585]
         # if i == 0:
-        #     coeff_arr = [1.1041402299999334, 0.5922905199999743, 0.20565499000002624, 0.10039526000000747, 105.76726719001645, 12.166876970012831, 0.00037239999999999723, 1.3378766500000039, 1.3356014500000069, 1.0500000000231948e-06, 0.0011533259999999888, 1]
+        #     coeff_arr = [0.43110840000000067, -0.09648450000000017, 26.467515200001362, 0.08402379999999943, -16.573753799999746, 7.747459899999862, 6.52795409999987, 0.9722, -0.001114400000000309, 0.011078199999999521, 0.01221449999999957, 0.013741199999999567]
         print(f"Process {i} beginning!")
         # limits = True if i % 2 == 0 else False
         multiprocessing.Process(target=program,
@@ -109,7 +115,17 @@ def comparison_method(method, final_sum_arr, num_split=9):
         sums = np.array(
             [sum(abs(goal_sections[i] - attempt_sections[i])) for i in
              range(num_split)])
-        summation = sum(sums[2:6])
+        summation = sum(sums[0:3])
+    elif method == 1:
+        sums = np.array(
+            [sum(abs(goal_sections[i] - attempt_sections[i])) for i in
+             range(num_split)])
+        summation = sum(sums[0:6])
+    elif method == 2:
+        sums = np.array(
+            [sum(abs(goal_sections[i] - attempt_sections[i])) for i in
+             range(num_split)])
+        summation = sum(sums)
     return summation
 
 
