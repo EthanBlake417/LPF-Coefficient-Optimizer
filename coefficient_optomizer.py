@@ -2,7 +2,7 @@ import random
 import threading
 import time
 import numpy as np
-from new_arrays import goal_arr, start_arr
+from new_arrays_2 import goal_arr, start_arr
 import matplotlib.pyplot as plt
 import multiprocessing
 import winsound
