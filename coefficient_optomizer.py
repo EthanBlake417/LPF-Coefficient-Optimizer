@@ -12,13 +12,13 @@ import logging
 # Now we are trying to match the original to just a regular sine wave
 # This means I need to create a new goal arr in file arrays.py
 
-def program(thread_number, best_sum, PreFilter_Gain, HPF_G1, LPF_G1, Through_Gain1, HPF_G2, LPF_G2, Through_Gain2, PreFilter_TC, HPF_TC1, LPF_TC1, HPF_TC2, LPF_TC2):
+def program(thread_number, best_sum, HPF_G1, LPF_G1, Through_Gain1, HPF_G2, LPF_G2, Through_Gain2, HPF_TC1, LPF_TC1, HPF_TC2, LPF_TC2):
     logging.basicConfig(level=logging.INFO,
                         filename=f"Logging/log_{thread_number}.log",
                         filemode="w",
                         format="%(asctime)s - %(levelname)s - %(message)s")
 
-    coeff_arr = np.array([PreFilter_Gain, HPF_G1, LPF_G1, Through_Gain1, HPF_G2, LPF_G2, Through_Gain2, PreFilter_TC, HPF_TC1, LPF_TC1, HPF_TC2, LPF_TC2])
+    coeff_arr = np.array([HPF_G1, LPF_G1, Through_Gain1, HPF_G2, LPF_G2, Through_Gain2, HPF_TC1, LPF_TC1, HPF_TC2, LPF_TC2])
     factor = [.01, .001, .0001, .00001, .000001, .0000001]
 
     counter = 0
@@ -26,7 +26,7 @@ def program(thread_number, best_sum, PreFilter_Gain, HPF_G1, LPF_G1, Through_Gai
     while True:
         best_sums_printed = 0
         down = False
-        random_ordering = [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11]
+        random_ordering = [0, 1, 2, 3, 4, 5, 6, 8, 9]
         random.shuffle(random_ordering)
         # print(random_ordering)
         for i in random_ordering:
@@ -49,7 +49,7 @@ def program(thread_number, best_sum, PreFilter_Gain, HPF_G1, LPF_G1, Through_Gai
                         if every_one_hundredth >= 100:
                             every_one_hundredth = 0
                             logging.info(
-                                f'{thread_number}, {best_sum}\n{coeff_arr[0]}, {coeff_arr[1]}, {coeff_arr[2]}, {coeff_arr[3]}, {coeff_arr[4]}, {coeff_arr[5]}, {coeff_arr[6]}, {coeff_arr[7]}, {coeff_arr[8]}, {coeff_arr[9]}, {coeff_arr[10]}, {coeff_arr[11]}')
+                                f'{thread_number}, {best_sum}\n{coeff_arr[0]}, {coeff_arr[1]}, {coeff_arr[2]}, {coeff_arr[3]}, {coeff_arr[4]}, {coeff_arr[5]}, {coeff_arr[6]}, {coeff_arr[7]}, {coeff_arr[8]}, {coeff_arr[9]}')
                     else:
                         direction_change += 1
                         if direction == 'up':
@@ -64,10 +64,10 @@ def program(thread_number, best_sum, PreFilter_Gain, HPF_G1, LPF_G1, Through_Gai
             break
     with open('best_solutions.txt', 'a') as f:
         f.write(
-            f'{thread_number}, {best_sum}\n{coeff_arr[0]}, {coeff_arr[1]}, {coeff_arr[2]}, {coeff_arr[3]}, {coeff_arr[4]}, {coeff_arr[5]}, {coeff_arr[6]}, {coeff_arr[7]}, {coeff_arr[8]}, {coeff_arr[9]}, {coeff_arr[10]},{ coeff_arr[11]}\n')
+            f'{thread_number}, {best_sum}\n{coeff_arr[0]}, {coeff_arr[1]}, {coeff_arr[2]}, {coeff_arr[3]}, {coeff_arr[4]}, {coeff_arr[5]}, {coeff_arr[6]}, {coeff_arr[7]}, {coeff_arr[8]}, {coeff_arr[9]}\n')
     logging.info(f"Process {thread_number} Done")
     logging.info(
-        f'{thread_number}, {best_sum}\n{coeff_arr[0]}, {coeff_arr[1]}, {coeff_arr[2]}, {coeff_arr[3]}, {coeff_arr[4]}, {coeff_arr[5]}, {coeff_arr[6]}, {coeff_arr[7]}, {coeff_arr[8]}, {coeff_arr[9]}, {coeff_arr[10]}, {coeff_arr[11]}')
+        f'{thread_number}, {best_sum}\n{coeff_arr[0]}, {coeff_arr[1]}, {coeff_arr[2]}, {coeff_arr[3]}, {coeff_arr[4]}, {coeff_arr[5]}, {coeff_arr[6]}, {coeff_arr[7]}, {coeff_arr[8]}, {coeff_arr[9]}')
     # logging.info(f"Starting Process {thread_number} Over with New Coefficients")
     # winsound.Beep(440, 2500)
     print(f"Process {thread_number} Done")
@@ -90,7 +90,7 @@ def main():
         cur_sum = float('inf')
         coeff_arr = None
         while og_sum < cur_sum:
-            coeff_arr = [round(random.uniform(0, 1), 4) for _ in range(12)]
+            coeff_arr = [round(random.uniform(0, 1), 4) for _ in range(10)]
             # coeff_arr[6] = .0006
             cur_sum, cur_sum_arr = get_sum_arr(*coeff_arr, method=2)
         # if i == 0:
@@ -105,7 +105,7 @@ def main():
                                 args=(i, og_sum, *coeff_arr)).start()
 
 
-def comparison_method(method, final_sum_arr, num_split=9):
+def comparison_method(method, final_sum_arr, num_split=21):
     attempt_sections = np.split(final_sum_arr, num_split)
     goal_sections = np.split(goal_arr, num_split)
     summation = None
@@ -127,20 +127,18 @@ def comparison_method(method, final_sum_arr, num_split=9):
     return summation
 
 
-def get_sum_arr(PreFilter_Gain, HPF_G1, LPF_G1, Through_Gain1, HPF_G2, LPF_G2, Through_Gain2, PreFilter_TC, HPF_TC1, LPF_TC1, HPF_TC2, LPF_TC2, method=0):
-    # goal array is column E, start array is column B
-    PreFilter_HPF = pass_filter(hpf=True, input_arr=start_arr, TC=PreFilter_TC, G=PreFilter_Gain)
-
-    HPF_1 = pass_filter(hpf=True, input_arr=PreFilter_HPF, TC=HPF_TC1, G=HPF_G1)
-    LPF_1 = pass_filter(hpf=False, input_arr=PreFilter_HPF, TC=LPF_TC1, G=LPF_G1)
-    sum_1 = Through_Gain1 * PreFilter_HPF + HPF_1 + LPF_1
+def get_sum_arr(HPF_G1, LPF_G1, Through_Gain1, HPF_G2, LPF_G2, Through_Gain2, HPF_TC1, LPF_TC1, HPF_TC2, LPF_TC2, method=0):
+    """ returns the array, and how close the arrays are (summation)"""
+    HPF_1 = pass_filter(hpf=True, input_arr=start_arr, TC=HPF_TC1, G=HPF_G1)
+    LPF_1 = pass_filter(hpf=False, input_arr=start_arr, TC=LPF_TC1, G=LPF_G1)
+    sum_1 = Through_Gain1 * start_arr + HPF_1 + LPF_1
 
     HPF_2 = pass_filter(hpf=True, input_arr=sum_1, TC=HPF_TC2, G=HPF_G2)
     LPF_2 = pass_filter(hpf=False, input_arr=sum_1, TC=LPF_TC2, G=LPF_G2)
     sum_out = Through_Gain2 * sum_1 + HPF_2 + LPF_2
 
     summation = comparison_method(method=method, final_sum_arr=sum_out,
-                                  num_split=9)
+                                  num_split=21)
     return summation, sum_out
 
 
